@@ -10,6 +10,8 @@ import {
   where, 
   orderBy, 
   limit,
+  startAfter,
+  DocumentSnapshot,
   onSnapshot,
   Timestamp 
 } from 'firebase/firestore';
@@ -146,4 +148,121 @@ export const getPostViews = async (post_id: string) => {
   const q = query(viewAnalyticsCollection, where('post_id', '==', post_id));
   const snapshot = await getDocs(q);
   return snapshot.size; // Return count of views
+};
+
+// Additional functions for new features
+export const createUser = async (userData: Omit<User, 'id'>): Promise<string> => {
+  try {
+    const docRef = await addDoc(usersCollection, {
+      ...userData,
+      dateCreated: Timestamp.fromDate(userData.dateCreated)
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw error;
+  }
+};
+
+export const getAllPosts = async (pageSize: number = 10, lastDoc?: DocumentSnapshot): Promise<{ posts: Post[], lastDoc: DocumentSnapshot | null }> => {
+  try {
+    let q = query(postsCollection, orderBy('dateCreated', 'desc'), limit(pageSize));
+    
+    if (lastDoc) {
+      q = query(postsCollection, orderBy('dateCreated', 'desc'), startAfter(lastDoc), limit(pageSize));
+    }
+    
+    const querySnapshot = await getDocs(q);
+    const posts = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Post[];
+    
+    const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1] || null;
+    
+    return { posts, lastDoc: lastVisible };
+  } catch (error) {
+    console.error('Error getting posts:', error);
+    throw error;
+  }
+};
+
+export const searchUsers = async (query: string): Promise<User[]> => {
+  try {
+    const querySnapshot = await getDocs(usersCollection);
+    
+    const users = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as User[];
+    
+    return users.filter(user => 
+      user.firstName.toLowerCase().includes(query.toLowerCase()) ||
+      user.lastName.toLowerCase().includes(query.toLowerCase()) ||
+      user.userName.toLowerCase().includes(query.toLowerCase()) ||
+      user.bio.toLowerCase().includes(query.toLowerCase())
+    );
+  } catch (error) {
+    console.error('Error searching users:', error);
+    throw error;
+  }
+};
+
+export const searchPosts = async (query: string): Promise<Post[]> => {
+  try {
+    const querySnapshot = await getDocs(postsCollection);
+    
+    const posts = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Post[];
+    
+    return posts.filter(post => 
+      post.textCaption.toLowerCase().includes(query.toLowerCase())
+    );
+  } catch (error) {
+    console.error('Error searching posts:', error);
+    throw error;
+  }
+};
+
+export const getPostById = async (postId: string): Promise<Post | null> => {
+  try {
+    const postDoc = await getDoc(doc(postsCollection, postId));
+    if (postDoc.exists()) {
+      return { id: postDoc.id, ...postDoc.data() } as Post;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting post:', error);
+    throw error;
+  }
+};
+
+export const createComment = async (comment: Omit<Comment, 'id'>): Promise<string> => {
+  try {
+    const docRef = await addDoc(commentsCollection, {
+      ...comment,
+      dateCreated: Timestamp.fromDate(comment.dateCreated)
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error('Error creating comment:', error);
+    throw error;
+  }
+};
+
+export const getCommentsByPostId = async (postId: string): Promise<Comment[]> => {
+  try {
+    const q = query(commentsCollection, where('post_id', '==', postId), orderBy('dateCreated', 'desc'));
+    const querySnapshot = await getDocs(q);
+    
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })) as Comment[];
+  } catch (error) {
+    console.error('Error getting comments:', error);
+    throw error;
+  }
 };

@@ -26,9 +26,10 @@ interface BlueskyPostProps {
   post: Post;
   currentUser?: User;
   onPostClick?: (postId: string) => void;
+  isDetailView?: boolean;
 }
 
-export function BlueskyPost({ post, currentUser, onPostClick }: BlueskyPostProps) {
+export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: BlueskyPostProps) {
   const [author, setAuthor] = useState<User | null>(null);
   const [likes, setLikes] = useState<Like[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -138,8 +139,10 @@ export function BlueskyPost({ post, currentUser, onPostClick }: BlueskyPostProps
 
   return (
     <article 
-      className="border-b border-gray-200 dark:border-gray-800 p-4 hover:bg-gray-50 dark:hover:bg-gray-900/50 cursor-pointer transition-colors"
-      onClick={() => onPostClick?.(post.id)}
+      className={`border-b border-gray-200 dark:border-gray-800 p-4 transition-colors ${
+        !isDetailView ? 'hover:bg-gray-50 dark:hover:bg-gray-900/50 cursor-pointer' : ''
+      }`}
+      onClick={!isDetailView ? () => onPostClick?.(post.id) : undefined}
     >
       {/* Header */}
       <div className="flex items-start space-x-3">

@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { BlueskyPost } from "./BlueskyPost";
 import { Post, User } from "@/types/firebase";
-import { getPosts } from "@/lib/firestore";
+import { getAllPosts, getUserByUid } from "@/lib/firestore";
 import { Loader2, Sparkles } from "lucide-react";
+import { DocumentSnapshot } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 interface BlueskyFeedProps {
   currentUser?: User;
@@ -11,10 +13,15 @@ interface BlueskyFeedProps {
 
 export function BlueskyFeed({ currentUser, className }: BlueskyFeedProps) {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [postUsers, setPostUsers] = useState<{ [uid: string]: User }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [lastDoc, setLastDoc] = useState<DocumentSnapshot | null>(null);
+  const [hasMore, setHasMore] = useState(true);
   const [feedType, setFeedType] = useState<'following' | 'discover'>('discover');
   const lastPostRef = useRef<HTMLDivElement>(null);
+  
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadInitialPosts();
@@ -23,8 +30,26 @@ export function BlueskyFeed({ currentUser, className }: BlueskyFeedProps) {
   const loadInitialPosts = async () => {
     try {
       setIsLoading(true);
-      const postsData = await getPosts(20);
+      const result = await getAllPosts(20);
+      const postsData = result.posts;
+      
       setPosts(postsData);
+      setLastDoc(result.lastDoc);
+      setHasMore(postsData.length === 20);
+      
+      // Load user data for each post
+      const uniqueUids = [...new Set(postsData.map(post => post.uid))];
+      const usersPromises = uniqueUids.map(uid => getUserByUid(uid));
+      const users = await Promise.all(usersPromises);
+      
+      const usersMap: { [uid: string]: User } = {};
+      users.forEach((user, index) => {
+        if (user) {
+          usersMap[uniqueUids[index]] = user;
+        }
+      });
+      
+      setPostUsers(usersMap);
     } catch (error) {
       console.error('Error loading posts:', error);
     } finally {
@@ -33,13 +58,30 @@ export function BlueskyFeed({ currentUser, className }: BlueskyFeedProps) {
   };
 
   const loadMorePosts = async () => {
-    if (isLoadingMore) return;
+    if (isLoadingMore || !hasMore) return;
     
     try {
       setIsLoadingMore(true);
-      // In a real implementation, you'd use pagination with startAfter
-      const morePosts = await getPosts(10);
+      const result = await getAllPosts(10, lastDoc);
+      const morePosts = result.posts;
+      
       setPosts(prev => [...prev, ...morePosts]);
+      setLastDoc(result.lastDoc);
+      setHasMore(morePosts.length === 10);
+      
+      // Load user data for new posts
+      const uniqueUids = [...new Set(morePosts.map(post => post.uid))];
+      const usersPromises = uniqueUids.map(uid => getUserByUid(uid));
+      const users = await Promise.all(usersPromises);
+      
+      const usersMap: { [uid: string]: User } = {};
+      users.forEach((user, index) => {
+        if (user) {
+          usersMap[uniqueUids[index]] = user;
+        }
+      });
+      
+      setPostUsers(prev => ({ ...prev, ...usersMap }));
     } catch (error) {
       console.error('Error loading more posts:', error);
     } finally {
@@ -124,10 +166,7 @@ export function BlueskyFeed({ currentUser, className }: BlueskyFeedProps) {
               <BlueskyPost 
                 post={post} 
                 currentUser={currentUser}
-                onPostClick={(postId) => {
-                  // Handle post click - could navigate to post detail
-                  console.log('Post clicked:', postId);
-                }}
+                onPostClick={(postId) => navigate(`/post/${postId}`)}
               />
             </div>
           ))
