@@ -124,9 +124,9 @@ export function BlueskyFeed({ currentUser, className }: BlueskyFeedProps) {
               <BlueskyPost 
                 post={post} 
                 currentUser={currentUser}
-                onPostClick={() => {
+                onPostClick={(postId) => {
                   // Handle post click - could navigate to post detail
-                  console.log('Post clicked:', post.id);
+                  console.log('Post clicked:', postId);
                 }}
               />
             </div>

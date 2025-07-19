@@ -25,7 +25,7 @@ import {
 interface BlueskyPostProps {
   post: Post;
   currentUser?: User;
-  onPostClick?: () => void;
+  onPostClick?: (postId: string) => void;
 }
 
 export function BlueskyPost({ post, currentUser, onPostClick }: BlueskyPostProps) {
@@ -139,7 +139,7 @@ export function BlueskyPost({ post, currentUser, onPostClick }: BlueskyPostProps
   return (
     <article 
       className="border-b border-gray-200 dark:border-gray-800 p-4 hover:bg-gray-50 dark:hover:bg-gray-900/50 cursor-pointer transition-colors"
-      onClick={onPostClick}
+      onClick={() => onPostClick?.(post.id)}
     >
       {/* Header */}
       <div className="flex items-start space-x-3">
