@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { BlueskyPost } from "./BlueskyPost";
 import { Post, User } from "@/types/firebase";
 import { getAllPosts, getUserByUid } from "@/lib/firestore";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, RotateCw } from "lucide-react";
 import { DocumentSnapshot } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
@@ -30,12 +30,12 @@ export function BlueskyFeed({ currentUser, className }: BlueskyFeedProps) {
   const loadInitialPosts = async () => {
     try {
       setIsLoading(true);
-      const result = await getAllPosts(20);
+      const result = await getAllPosts(5);
       const postsData = result.posts;
       
       setPosts(postsData);
       setLastDoc(result.lastDoc);
-      setHasMore(postsData.length === 20);
+      setHasMore(postsData.length === 5);
       
       // Load user data for each post
       const uniqueUids = [...new Set(postsData.map(post => post.uid))];
@@ -62,12 +62,12 @@ export function BlueskyFeed({ currentUser, className }: BlueskyFeedProps) {
     
     try {
       setIsLoadingMore(true);
-      const result = await getAllPosts(10, lastDoc);
+      const result = await getAllPosts(5, lastDoc);
       const morePosts = result.posts;
       
       setPosts(prev => [...prev, ...morePosts]);
       setLastDoc(result.lastDoc);
-      setHasMore(morePosts.length === 10);
+      setHasMore(morePosts.length === 5);
       
       // Load user data for new posts
       const uniqueUids = [...new Set(morePosts.map(post => post.uid))];
@@ -176,7 +176,7 @@ export function BlueskyFeed({ currentUser, className }: BlueskyFeedProps) {
       {/* Loading more indicator */}
       {isLoadingMore && (
         <div className="flex justify-center py-4">
-          <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
+          <RotateCw className="w-6 h-6 animate-spin text-blue-500" />
         </div>
       )}
     </div>

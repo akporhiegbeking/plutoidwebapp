@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 import { 
   Heart, 
   MessageCircle, 
@@ -30,6 +31,7 @@ interface BlueskyPostProps {
 }
 
 export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: BlueskyPostProps) {
+  const navigate = useNavigate();
   const [author, setAuthor] = useState<User | null>(null);
   const [likes, setLikes] = useState<Like[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
@@ -147,7 +149,15 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
       {/* Header */}
       <div className="flex items-start space-x-3">
         {/* Avatar */}
-        <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+        <div 
+          className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={(e) => {
+            e.stopPropagation();
+            if (author) {
+              navigate(`/user/${author.uid}`);
+            }
+          }}
+        >
           {author?.imageURL ? (
             <img 
               src={author.imageURL} 
@@ -165,7 +175,15 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
         <div className="flex-1 min-w-0">
           {/* Author info */}
           <div className="flex items-center space-x-2 mb-1">
-            <span className="font-bold text-gray-900 dark:text-white">
+            <span 
+              className="font-bold text-gray-900 dark:text-white cursor-pointer hover:underline"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (author) {
+                  navigate(`/user/${author.uid}`);
+                }
+              }}
+            >
               {author ? `${author.firstName} ${author.lastName}` : 'Loading...'}
             </span>
             <span className="text-gray-500">@{author?.userName || 'username'}</span>
