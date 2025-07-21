@@ -30,12 +30,12 @@ export function BlueskyFeed({ currentUser, className }: BlueskyFeedProps) {
   const loadInitialPosts = async () => {
     try {
       setIsLoading(true);
-      const result = await getAllPosts(5);
+      const result = await getAllPosts(); // Load all posts
       const postsData = result.posts;
       
       setPosts(postsData);
       setLastDoc(result.lastDoc);
-      setHasMore(postsData.length === 5);
+      setHasMore(false); // No more posts to load since we loaded all
       
       // Load user data for each post
       const uniqueUids = [...new Set(postsData.map(post => post.uid))];
@@ -58,54 +58,11 @@ export function BlueskyFeed({ currentUser, className }: BlueskyFeedProps) {
   };
 
   const loadMorePosts = async () => {
-    if (isLoadingMore || !hasMore) return;
-    
-    try {
-      setIsLoadingMore(true);
-      const result = await getAllPosts(5, lastDoc);
-      const morePosts = result.posts;
-      
-      setPosts(prev => [...prev, ...morePosts]);
-      setLastDoc(result.lastDoc);
-      setHasMore(morePosts.length === 5);
-      
-      // Load user data for new posts
-      const uniqueUids = [...new Set(morePosts.map(post => post.uid))];
-      const usersPromises = uniqueUids.map(uid => getUserByUid(uid));
-      const users = await Promise.all(usersPromises);
-      
-      const usersMap: { [uid: string]: User } = {};
-      users.forEach((user, index) => {
-        if (user) {
-          usersMap[uniqueUids[index]] = user;
-        }
-      });
-      
-      setPostUsers(prev => ({ ...prev, ...usersMap }));
-    } catch (error) {
-      console.error('Error loading more posts:', error);
-    } finally {
-      setIsLoadingMore(false);
-    }
+    // Since we load all posts initially, no need for more loading
+    return;
   };
 
-  // Infinite scroll
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !isLoadingMore) {
-          loadMorePosts();
-        }
-      },
-      { threshold: 1.0 }
-    );
-
-    if (lastPostRef.current) {
-      observer.observe(lastPostRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [isLoadingMore]);
+  // No infinite scroll needed since we load all posts
 
   if (isLoading) {
     return (
@@ -159,26 +116,16 @@ export function BlueskyFeed({ currentUser, className }: BlueskyFeedProps) {
           </div>
         ) : (
           posts.map((post, index) => (
-            <div
+            <BlueskyPost 
               key={post.id || index}
-              ref={index === posts.length - 1 ? lastPostRef : null}
-            >
-              <BlueskyPost 
-                post={post} 
-                currentUser={currentUser}
-                onPostClick={(postId) => navigate(`/post/${postId}`)}
-              />
-            </div>
+              post={post} 
+              currentUser={currentUser}
+              onPostClick={(postId) => navigate(`/post/${postId}`)}
+            />
           ))
         )}
       </div>
 
-      {/* Loading more indicator */}
-      {isLoadingMore && (
-        <div className="flex justify-center py-4">
-          <RotateCw className="w-6 h-6 animate-spin text-blue-500" />
-        </div>
-      )}
     </div>
   );
 }

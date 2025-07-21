@@ -153,7 +153,7 @@ export default function UserDetails() {
             )}
             <div className="flex items-center gap-1">
               <Calendar className="w-4 h-4" />
-              <span>Joined {user.dateCreated.toDate().toLocaleDateString()}</span>
+              <span>Joined {user.dateCreated?.toDate ? user.dateCreated.toDate().toLocaleDateString() : new Date(user.dateCreated).toLocaleDateString()}</span>
             </div>
           </div>
         </div>
