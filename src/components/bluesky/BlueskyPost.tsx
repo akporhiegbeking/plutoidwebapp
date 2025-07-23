@@ -24,7 +24,7 @@ import {
 } from "@/lib/firestore";
 
 interface BlueskyPostProps {
-  post: Post;
+  post: any; // Enhanced post with user data and stats
   currentUser?: User;
   onPostClick?: (postId: string) => void;
   isDetailView?: boolean;
@@ -32,13 +32,15 @@ interface BlueskyPostProps {
 
 export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: BlueskyPostProps) {
   const navigate = useNavigate();
-  const [author, setAuthor] = useState<User | null>(null);
+  const [author, setAuthor] = useState<User | null>(post.user || null);
   const [likes, setLikes] = useState<Like[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
-  const [isLiked, setIsLiked] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isLiked, setIsLiked] = useState(post.isLiked || false);
+  const [isSaved, setIsSaved] = useState(post.isSaved || false);
   const [userLike, setUserLike] = useState<Like | null>(null);
   const [savedItem, setSavedItem] = useState<any>(null);
+  const [likeCount, setLikeCount] = useState(post.likeCount || 0);
+  const [commentCount, setCommentCount] = useState(post.commentsCount || 0);
 
   // Format timestamp like BlueSky (e.g., "2h", "1d", "Mar 15")
   const formatTimestamp = (timestamp: any) => {
@@ -59,62 +61,36 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
   };
 
   useEffect(() => {
-    const loadPostData = async () => {
-      if (!post.id) return;
-
-      try {
-        // Load author
-        const authorData = await getUserByUid(post.uid);
-        setAuthor(authorData);
-
-        // Load likes
-        const likesData = await getLikesByPost(post.id);
-        setLikes(likesData);
-
-        // Load comments
-        const commentsData = await getCommentsByPost(post.id);
-        setComments(commentsData);
-
-        // Check if current user liked this post
-        if (currentUser?.uid) {
-          const userLikeData = await getUserLike(currentUser.uid, post.id);
-          setUserLike(userLikeData);
-          setIsLiked(!!userLikeData);
-
-          // Check if current user saved this post
-          const savedItemData = await getUserSavedItem(currentUser.uid, post.id);
-          setSavedItem(savedItemData);
-          setIsSaved(!!savedItemData);
-
-          // Track view
-          await addView(currentUser.uid, post.id);
-        }
-      } catch (error) {
-        console.error('Error loading post data:', error);
-      }
-    };
-
-    loadPostData();
+    // Track view if current user exists
+    if (currentUser?.uid && post.id) {
+      addView(currentUser.uid, post.id).catch(error => 
+        console.error('Error tracking view:', error)
+      );
+    }
   }, [post.id, currentUser?.uid]);
 
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!currentUser?.uid || !post.id) return;
 
+    // Optimistic UI update
+    const wasLiked = isLiked;
+    setIsLiked(!wasLiked);
+    setLikeCount(prev => wasLiked ? prev - 1 : prev + 1);
+
     try {
-      if (isLiked && userLike?.id) {
+      if (wasLiked && userLike?.id) {
         await removeLike(userLike.id);
-        setLikes(prev => prev.filter(like => like.id !== userLike.id));
-        setIsLiked(false);
         setUserLike(null);
       } else {
         const likeId = await addLike(currentUser.uid, post.id);
         const newLike = { id: likeId, uid: currentUser.uid, post_id: post.id, dateCreated: new Date() };
-        setLikes(prev => [...prev, newLike]);
-        setIsLiked(true);
         setUserLike(newLike);
       }
     } catch (error) {
+      // Revert optimistic update on error
+      setIsLiked(wasLiked);
+      setLikeCount(prev => wasLiked ? prev + 1 : prev - 1);
       console.error('Error toggling like:', error);
     }
   };
@@ -220,7 +196,7 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
               onClick={(e) => e.stopPropagation()}
             >
               <MessageCircle className="w-4 h-4" />
-              <span className="text-sm">{comments.length}</span>
+              <span className="text-sm">{commentCount}</span>
             </button>
 
             {/* Repost */}
@@ -242,7 +218,7 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
               onClick={handleLike}
             >
               <Heart className={cn("w-4 h-4", isLiked && "fill-current")} />
-              <span className="text-sm">{likes.length}</span>
+              <span className="text-sm">{likeCount}</span>
             </button>
 
             {/* Save */}

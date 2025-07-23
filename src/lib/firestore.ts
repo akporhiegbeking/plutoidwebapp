@@ -164,26 +164,114 @@ export const createUser = async (userData: Omit<User, 'id'>): Promise<string> =>
   }
 };
 
-export const getAllPosts = async (pageSize: number = 10, lastDoc?: DocumentSnapshot): Promise<{ posts: Post[], lastDoc: DocumentSnapshot | null }> => {
+export const getAllPosts = async (): Promise<{ posts: any[], lastDoc: DocumentSnapshot | null }> => {
   try {
-    let q = query(postsCollection, orderBy('dateCreated', 'desc'), limit(pageSize));
+    // Query all posts ordered by dateCreated desc
+    const q = query(postsCollection, orderBy('dateCreated', 'desc'));
+    const postsSnapshot = await getDocs(q);
     
-    if (lastDoc) {
-      q = query(postsCollection, orderBy('dateCreated', 'desc'), startAfter(lastDoc), limit(pageSize));
-    }
+    const userCache: { [uid: string]: User } = {};
     
-    const querySnapshot = await getDocs(q);
-    const posts = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    })) as Post[];
-    
-    const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1] || null;
-    
-    return { posts, lastDoc: lastVisible };
+    const postsPromises = postsSnapshot.docs.map(async (postDoc) => {
+      const postData = postDoc.data();
+      
+      if (!postData.uid || !postData.dateCreated) {
+        console.warn(`⛔ Skipping post ${postDoc.id} due to missing uid/dateCreated`);
+        return null;
+      }
+
+      // Get user data with caching
+      let userData = userCache[postData.uid];
+      if (!userData) {
+        const userSnapshot = await getDocs(
+          query(usersCollection, where('uid', '==', postData.uid))
+        );
+        if (userSnapshot.empty) return null;
+        userData = userSnapshot.docs[0].data() as User;
+        userCache[postData.uid] = userData;
+      }
+
+      let postWithUser: any = {
+        ...postData,
+        id: postDoc.id,
+        user: {
+          uid: userData.uid,
+          userName: userData.userName,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          imageURL: userData.imageURL,
+          countryOrigin: userData.country,
+        },
+      };
+
+      // Handle repost logic
+      if (postData.re_post && postData.post_made_by) {
+        const originalPosterSnap = await getDocs(
+          query(usersCollection, where('uid', '==', postData.post_made_by))
+        );
+        if (!originalPosterSnap.empty) {
+          const originalPosterData = originalPosterSnap.docs[0].data();
+          postWithUser.originalPoster = {
+            uid: originalPosterData.uid,
+            firstName: originalPosterData.firstName,
+            lastName: originalPosterData.lastName,
+            userName: originalPosterData.userName,
+            imageURL: originalPosterData.imageURL,
+          };
+        }
+      }
+
+      // Get current user ID safely
+      const currentUserId = typeof window !== 'undefined' && 
+        window.localStorage.getItem('currentUserId') || '';
+
+      // Fetch all additional data in parallel
+      const [
+        commentsSnapshot,
+        likeSnapshot,
+        viewSnapshot,
+        isLikedSnap,
+        bookmarkSnap,
+        isSavedSnap,
+      ] = await Promise.all([
+        getDocs(query(commentsCollection, where('post_id', '==', postDoc.id))),
+        getDocs(query(likesCollection, where('post_id', '==', postDoc.id))),
+        getDocs(query(viewAnalyticsCollection, where('post_id', '==', postDoc.id))),
+        currentUserId ? getDocs(
+          query(
+            likesCollection,
+            where('uid', '==', currentUserId),
+            where('post_id', '==', postDoc.id)
+          )
+        ) : Promise.resolve({ empty: true }),
+        getDocs(query(savedItemsCollection, where('post_id', '==', postDoc.id))),
+        currentUserId ? getDocs(
+          query(
+            savedItemsCollection,
+            where('uid', '==', currentUserId),
+            where('post_id', '==', postDoc.id)
+          )
+        ) : Promise.resolve({ empty: true }),
+      ]);
+
+      return {
+        ...postWithUser,
+        commentsCount: commentsSnapshot.size,
+        likeCount: likeSnapshot.size,
+        viewCount: viewSnapshot.size,
+        isLiked: !isLikedSnap.empty,
+        bookmarkCount: bookmarkSnap.size,
+        isSaved: !isSavedSnap.empty,
+      };
+    });
+
+    const postsResults = await Promise.all(postsPromises);
+    const validPosts = postsResults.filter(Boolean);
+
+    return { posts: validPosts, lastDoc: null };
   } catch (error) {
-    console.error('Error getting posts:', error);
-    throw error;
+    console.error('Error getting all posts:', error);
+    return { posts: [], lastDoc: null };
   }
 };
 

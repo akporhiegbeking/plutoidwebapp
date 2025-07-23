@@ -37,19 +37,8 @@ export function BlueskyFeed({ currentUser, className }: BlueskyFeedProps) {
       setLastDoc(result.lastDoc);
       setHasMore(false); // No more posts to load since we loaded all
       
-      // Load user data for each post
-      const uniqueUids = [...new Set(postsData.map(post => post.uid))];
-      const usersPromises = uniqueUids.map(uid => getUserByUid(uid));
-      const users = await Promise.all(usersPromises);
-      
-      const usersMap: { [uid: string]: User } = {};
-      users.forEach((user, index) => {
-        if (user) {
-          usersMap[uniqueUids[index]] = user;
-        }
-      });
-      
-      setPostUsers(usersMap);
+      // Posts already include user data from getAllPosts
+      setPostUsers({});
     } catch (error) {
       console.error('Error loading posts:', error);
     } finally {

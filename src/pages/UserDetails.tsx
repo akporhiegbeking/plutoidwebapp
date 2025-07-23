@@ -37,12 +37,12 @@ export default function UserDetails() {
     if (!userId) return;
     try {
       setIsLoading(true);
-      const result = await getAllPosts(10);
+      const result = await getAllPosts();
       // Filter posts by this user
       const userPosts = result.posts.filter(post => post.uid === userId);
       setPosts(userPosts);
       setLastDoc(result.lastDoc);
-      setHasMore(userPosts.length === 10);
+      setHasMore(false); // No pagination since we load all posts
     } catch (error) {
       console.error('Error loading user posts:', error);
     } finally {
@@ -51,20 +51,8 @@ export default function UserDetails() {
   };
 
   const loadMorePosts = async () => {
-    if (isLoadingMore || !hasMore || !userId) return;
-    
-    try {
-      setIsLoadingMore(true);
-      const result = await getAllPosts(10, lastDoc);
-      const userPosts = result.posts.filter(post => post.uid === userId);
-      setPosts(prev => [...prev, ...userPosts]);
-      setLastDoc(result.lastDoc);
-      setHasMore(userPosts.length === 10);
-    } catch (error) {
-      console.error('Error loading more posts:', error);
-    } finally {
-      setIsLoadingMore(false);
-    }
+    // No more loading needed since we get all posts
+    return;
   };
 
   if (isLoading) {
