@@ -30,6 +30,28 @@ export interface Post {
   textCaption: string;
   country: string;
   re_post: string;
+  // Extended fields from mobile app
+  user?: {
+    uid: string;
+    userName: string;
+    firstName: string;
+    lastName: string;
+    imageURL: string;
+    countryOrigin: string;
+  };
+  originalPoster?: {
+    uid: string;
+    firstName: string;
+    lastName: string;
+    userName: string;
+    imageURL: string;
+  };
+  commentsCount?: number;
+  likeCount?: number;
+  viewCount?: number;
+  isLiked?: boolean;
+  bookmarkCount?: number;
+  isSaved?: boolean;
 }
 
 export interface SavedItem {

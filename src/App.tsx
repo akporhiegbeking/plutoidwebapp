@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import { SearchScreen } from "./pages/SearchScreen";
+import { FindScreen } from "./pages/FindScreen";
 import { CommentScreen } from "./pages/CommentScreen";
 import UserDetails from "./pages/UserDetails";
 import NotFound from "./pages/NotFound";
@@ -45,6 +46,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/search" element={<SearchScreen currentUser={currentUser} />} />
+            <Route path="/feeds" element={<FindScreen currentUser={currentUser} />} />
             <Route path="/post/:postId" element={<CommentScreen currentUser={currentUser} />} />
             <Route path="/user/:userId" element={<UserDetails />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
