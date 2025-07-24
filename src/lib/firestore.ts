@@ -16,7 +16,7 @@ import {
   Timestamp 
 } from 'firebase/firestore';
 import { db } from './firebase';
-import { Post, User, Like, Comment, SavedItem, ViewAnalytic } from '@/types/firebase';
+import { Post, User, Like, Comment, SavedItem, ViewAnalytic, ExtendedPost } from '@/types/firebase';
 
 // Posts collection operations
 export const postsCollection = collection(db, 'posts');
@@ -352,5 +352,95 @@ export const getCommentsByPostId = async (postId: string): Promise<Comment[]> =>
   } catch (error) {
     console.error('Error getting comments:', error);
     throw error;
+  }
+};
+
+// Hashtag extraction and trending functions
+export const getTrendingHashtags = async (limit: number = 20): Promise<{ hashtag: string; count: number }[]> => {
+  try {
+    const postsSnapshot = await getDocs(postsCollection);
+    const hashtagCount: Record<string, number> = {};
+    
+    postsSnapshot.docs.forEach((doc) => {
+      const post = doc.data();
+      if (post.textCaption) {
+        // Extract hashtags using regex
+        const hashtags = post.textCaption.match(/#\w+/g) || [];
+        hashtags.forEach((hashtag) => {
+          const cleanHashtag = hashtag.toLowerCase();
+          hashtagCount[cleanHashtag] = (hashtagCount[cleanHashtag] || 0) + 1;
+        });
+      }
+    });
+    
+    // Sort hashtags by count and return top ones
+    return Object.entries(hashtagCount)
+      .map(([hashtag, count]) => ({ hashtag, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, limit);
+  } catch (error) {
+    console.error('Error fetching trending hashtags:', error);
+    return [];
+  }
+};
+
+export const getPostsByHashtag = async (hashtag: string): Promise<ExtendedPost[]> => {
+  try {
+    const postsSnapshot = await getDocs(
+      query(
+        postsCollection,
+        orderBy('dateCreated', 'desc')
+      )
+    );
+    
+    const userCache: Record<string, User> = {};
+    const filteredPosts: ExtendedPost[] = [];
+    
+    for (const postDoc of postsSnapshot.docs) {
+      const postData = postDoc.data() as Post;
+      
+      // Check if post contains the hashtag
+      if (postData.textCaption && postData.textCaption.toLowerCase().includes(hashtag.toLowerCase())) {
+        // Get user data
+        let userData = userCache[postData.uid];
+        if (!userData) {
+          const userSnapshot = await getDocs(
+            query(usersCollection, where('uid', '==', postData.uid))
+          );
+          if (!userSnapshot.empty) {
+            userData = userSnapshot.docs[0].data() as User;
+            userCache[postData.uid] = userData;
+          }
+        }
+        
+        if (userData) {
+          // Get engagement data
+          const [likesSnapshot, commentsSnapshot, viewsSnapshot] = await Promise.all([
+            getDocs(query(likesCollection, where('post_id', '==', postDoc.id))),
+            getDocs(query(commentsCollection, where('post_id', '==', postDoc.id))),
+            getDocs(query(viewAnalyticsCollection, where('post_id', '==', postDoc.id)))
+          ]);
+          
+          const extendedPost: ExtendedPost = {
+            ...postData,
+            id: postDoc.id,
+            user: userData,
+            likeCount: likesSnapshot.size,
+            commentsCount: commentsSnapshot.size,
+            viewCount: viewsSnapshot.size,
+            isLiked: false,
+            bookmarkCount: 0,
+            isSaved: false
+          };
+          
+          filteredPosts.push(extendedPost);
+        }
+      }
+    }
+    
+    return filteredPosts;
+  } catch (error) {
+    console.error('Error fetching posts by hashtag:', error);
+    return [];
   }
 };

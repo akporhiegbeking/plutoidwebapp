@@ -73,3 +73,13 @@ export interface ViewAnalytic {
   post_id: string;
   date_viewed: any; // Firestore Timestamp
 }
+
+export interface ExtendedPost extends Post {
+  user: User;
+  likeCount: number;
+  commentsCount: number;
+  viewCount: number;
+  isLiked: boolean;
+  bookmarkCount: number;
+  isSaved: boolean;
+}
