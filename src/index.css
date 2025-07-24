@@ -16,10 +16,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222 84% 5%;
 
-    /* Plutoid brand yellow */
-    --primary: 60 100% 50%;
-    --primary-foreground: 240 10% 3.9%;
-    --primary-hover: 55 100% 55%;
+    /* Plutoid brand purple-blue gradient */
+    --primary: 258 90% 66%;
+    --primary-foreground: 0 0% 98%;
+    --primary-hover: 258 85% 70%;
     
     /* Soft secondary colors */
     --secondary: 240 4.8% 95.9%;
@@ -30,8 +30,8 @@
     --muted-foreground: 240 3.8% 46.1%;
 
     /* Accent color for highlights */
-    --accent: 60 100% 95%;
-    --accent-foreground: 60 100% 50%;
+    --accent: 258 100% 97%;
+    --accent-foreground: 258 90% 66%;
 
     /* Error states */
     --destructive: 0 84% 60%;
@@ -40,7 +40,7 @@
     /* Borders and inputs */
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 60 100% 50%;
+    --ring: 258 90% 66%;
 
     /* Border radius for modern feel */
     --radius: 0.75rem;
@@ -48,18 +48,18 @@
     /* Social media specific colors */
     --like-color: 348 83% 47%;
     --repost-color: 142 71% 45%;
-    --comment-color: 60 100% 50%;
+    --comment-color: 258 90% 66%;
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(60 100% 50%), hsl(55 100% 55%));
+    --gradient-primary: linear-gradient(135deg, hsl(258 90% 66%), hsl(282 85% 70%));
     --gradient-secondary: linear-gradient(135deg, hsl(240 4.8% 95.9%), hsl(240 5.9% 98%));
-    --gradient-hero: linear-gradient(135deg, hsl(60 100% 50%), hsl(55 100% 55%), hsl(50 100% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(258 90% 66%), hsl(282 85% 70%), hsl(300 80% 75%));
     
     /* Shadows for depth */
-    --shadow-sm: 0 1px 2px 0 hsl(60 100% 50% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(60 100% 50% / 0.1), 0 2px 4px -1px hsl(60 100% 50% / 0.06);
-    --shadow-lg: 0 10px 15px -3px hsl(60 100% 50% / 0.1), 0 4px 6px -2px hsl(60 100% 50% / 0.05);
-    --shadow-glow: 0 0 0 1px hsl(60 100% 50% / 0.1), 0 0 20px hsl(60 100% 50% / 0.2);
+    --shadow-sm: 0 1px 2px 0 hsl(258 90% 66% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(258 90% 66% / 0.1), 0 2px 4px -1px hsl(258 90% 66% / 0.06);
+    --shadow-lg: 0 10px 15px -3px hsl(258 90% 66% / 0.1), 0 4px 6px -2px hsl(258 90% 66% / 0.05);
+    --shadow-glow: 0 0 0 1px hsl(258 90% 66% / 0.1), 0 0 20px hsl(258 90% 66% / 0.2);
 
     /* Animations */
     --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
@@ -80,7 +80,7 @@
 
     --sidebar-border: 220 13% 91%;
 
-    --sidebar-ring: 60 100% 50%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
@@ -95,9 +95,9 @@
     --popover-foreground: 0 0% 98%;
 
     /* Plutoid brand in dark mode */
-    --primary: 60 100% 50%;
-    --primary-foreground: 240 10% 3.9%;
-    --primary-hover: 55 100% 55%;
+    --primary: 258 90% 66%;
+    --primary-foreground: 0 0% 98%;
+    --primary-hover: 258 85% 70%;
 
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
@@ -106,40 +106,40 @@
     --muted-foreground: 240 5% 64.9%;
 
     --accent: 240 3.7% 15.9%;
-    --accent-foreground: 60 100% 50%;
+    --accent-foreground: 258 90% 66%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 60 100% 50%;
+    --ring: 258 90% 66%;
 
     /* Social colors in dark mode */
     --like-color: 348 83% 57%;
     --repost-color: 142 71% 55%;
-    --comment-color: 60 100% 50%;
+    --comment-color: 258 90% 66%;
 
     /* Dark mode gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(60 100% 50%), hsl(55 100% 55%));
+    --gradient-primary: linear-gradient(135deg, hsl(258 90% 66%), hsl(282 85% 70%));
     --gradient-secondary: linear-gradient(135deg, hsl(240 3.7% 15.9%), hsl(240 5% 20%));
-    --gradient-hero: linear-gradient(135deg, hsl(60 100% 50%), hsl(55 100% 55%), hsl(50 100% 60%));
+    --gradient-hero: linear-gradient(135deg, hsl(258 90% 66%), hsl(282 85% 70%), hsl(300 80% 75%));
     
     /* Dark shadows */
     --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.15);
     --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.2), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
     --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.25), 0 4px 6px -2px hsl(0 0% 0% / 0.1);
-    --shadow-glow: 0 0 0 1px hsl(60 100% 50% / 0.2), 0 0 20px hsl(60 100% 50% / 0.3);
+    --shadow-glow: 0 0 0 1px hsl(258 90% 66% / 0.2), 0 0 20px hsl(258 90% 66% / 0.3);
 
     /* Sidebar colors for dark mode */
     --sidebar-background: 240 10% 3.9%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 60 100% 50%;
+    --sidebar-primary: 258 90% 66%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 60 100% 50%;
+    --sidebar-ring: 258 90% 66%;
   }
 }
 

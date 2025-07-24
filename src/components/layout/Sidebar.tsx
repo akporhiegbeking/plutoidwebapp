@@ -22,8 +22,9 @@ const navigationItems = [
   { icon: Home, label: "Home", path: "/" },
   { icon: Search, label: "Search", path: "/search" },
   { icon: Bell, label: "Notifications", path: "/notifications" },
-  { icon: Mail, label: "Chat", path: "/chat" },
-  { icon: Hash, label: "Feeds", path: "/feeds" },
+  { icon: Mail, label: "Messages", path: "/messages" },
+  { icon: Hash, label: "Explore", path: "/explore" },
+  { icon: TrendingUp, label: "Trending", path: "/trending" },
   { icon: User, label: "Profile", path: "/profile" },
   { icon: Settings, label: "Settings", path: "/settings" },
 ];
@@ -32,7 +33,7 @@ export function Sidebar({ className }: SidebarProps) {
   const [activeItem, setActiveItem] = useState("/");
 
   return (
-    <div className={cn("fixed left-0 top-0 flex flex-col h-screen w-64 bg-background border-r border-border z-50", className)}>
+    <div className={cn("flex flex-col h-screen w-64 bg-background border-r border-border", className)}>
       {/* Logo */}
       <div className="p-6">
         <div className="flex items-center space-x-3">
