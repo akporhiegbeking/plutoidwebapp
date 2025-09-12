@@ -195,26 +195,29 @@ export const getPostsPaginated = async (limitCount: number = 5, lastDoc?: Docume
           : query(usersCollection, where('uuid', '==', postData.uuid));
         
         const userSnapshot = await getDocs(userQuery);
-        if (userSnapshot.empty) return null;
-        userData = userSnapshot.docs[0].data() as User;
-        userCache[userId] = userData;
+        if (!userSnapshot.empty) {
+          userData = userSnapshot.docs[0].data() as User;
+          userCache[userId] = userData;
+        }
       }
 
-      // Convert Firestore timestamp to JavaScript Date
+      // Convert Firestore timestamp to JavaScript Date for client usage
       const dateCreated = postData.dateCreated?.toDate ? postData.dateCreated.toDate() : postData.dateCreated;
+
+      const postUser = {
+        uid: userData?.uid || userData?.uuid || postData.uid || postData.uuid || 'unknown',
+        userName: userData?.userName || postData.userName || (postData.email ? String(postData.email).split('@')[0] : 'user'),
+        firstName: userData?.firstName || postData.firstName || '',
+        lastName: userData?.lastName || postData.lastName || '',
+        imageURL: userData?.imageURL || postData.imageURL || '',
+        countryOrigin: userData?.country || postData.country || '',
+      };
 
       let postWithUser: any = {
         ...postData,
         id: postDoc.id,
-        dateCreated: dateCreated,
-        user: {
-          uid: userData.uid || userData.uuid,
-          userName: userData.userName,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          imageURL: userData.imageURL,
-          countryOrigin: userData.country,
-        },
+        dateCreated,
+        user: postUser,
       };
 
       // Handle repost logic
@@ -300,33 +303,42 @@ export const getAllPosts = async (): Promise<{ posts: any[], lastDoc: DocumentSn
     const postsPromises = postsSnapshot.docs.map(async (postDoc) => {
       const postData = postDoc.data();
       
-      if (!postData.uid || !postData.dateCreated) {
-        console.warn(`⛔ Skipping post ${postDoc.id} due to missing uid/dateCreated`);
+      const userId = postData.uid || postData.uuid;
+      if (!userId || !postData.dateCreated) {
+        console.warn(`⛔ Skipping post ${postDoc.id} due to missing uid/uuid/dateCreated`);
         return null;
       }
 
-      // Get user data with caching
-      let userData = userCache[postData.uid];
+      // Get user data with caching (handle both uid and uuid)
+      let userData = userCache[userId];
       if (!userData) {
-        const userSnapshot = await getDocs(
-          query(usersCollection, where('uid', '==', postData.uid))
-        );
-        if (userSnapshot.empty) return null;
-        userData = userSnapshot.docs[0].data() as User;
-        userCache[postData.uid] = userData;
+        const userQuery = postData.uid 
+          ? query(usersCollection, where('uid', '==', postData.uid))
+          : query(usersCollection, where('uuid', '==', postData.uuid));
+        const userSnapshot = await getDocs(userQuery);
+        if (!userSnapshot.empty) {
+          userData = userSnapshot.docs[0].data() as User;
+          userCache[userId] = userData;
+        }
       }
+
+      // Convert Firestore timestamp to JavaScript Date for client usage
+      const dateCreated = postData.dateCreated?.toDate ? postData.dateCreated.toDate() : postData.dateCreated;
+
+      const postUser = {
+        uid: userData?.uid || userData?.uuid || postData.uid || postData.uuid || 'unknown',
+        userName: userData?.userName || postData.userName || (postData.email ? String(postData.email).split('@')[0] : 'user'),
+        firstName: userData?.firstName || postData.firstName || '',
+        lastName: userData?.lastName || postData.lastName || '',
+        imageURL: userData?.imageURL || postData.imageURL || '',
+        countryOrigin: userData?.country || postData.country || '',
+      };
 
       let postWithUser: any = {
         ...postData,
         id: postDoc.id,
-        user: {
-          uid: userData.uid,
-          userName: userData.userName,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          imageURL: userData.imageURL,
-          countryOrigin: userData.country,
-        },
+        dateCreated,
+        user: postUser,
       };
 
       // Handle repost logic
