@@ -13,39 +13,38 @@ import {
 interface PostCardProps {
   post: {
     id: string;
-    author: {
-      name: string;
-      username: string;
-      avatar?: string;
+    user: {
+      uid: string;
+      userName: string;
+      firstName: string;
+      lastName: string;
+      imageURL?: string;
+      countryOrigin?: string;
     };
-    content: string;
-    image?: string;
-    timestamp: string;
-    likes: number;
-    comments: number;
-    reposts: number;
+    textCaption: string;
+    imageURL?: string;
+    dateCreated: any;
+    likeCount: number;
+    commentsCount: number;
+    viewCount: number;
     isLiked?: boolean;
-    isReposted?: boolean;
-    isBookmarked?: boolean;
+    isSaved?: boolean;
   };
   className?: string;
 }
 
 export function PostCard({ post, className }: PostCardProps) {
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
-  const [isReposted, setIsReposted] = useState(post.isReposted || false);
-  const [isBookmarked, setIsBookmarked] = useState(post.isBookmarked || false);
-  const [likes, setLikes] = useState(post.likes);
-  const [reposts, setReposts] = useState(post.reposts);
+  const [isBookmarked, setIsBookmarked] = useState(post.isSaved || false);
+  const [likes, setLikes] = useState(post.likeCount || 0);
+  
+  // Format display name
+  const displayName = `${post.user.firstName} ${post.user.lastName}`.trim() || post.user.userName;
+  const timestamp = post.dateCreated?.toDate ? post.dateCreated.toDate().toLocaleDateString() : 'Unknown';
 
   const handleLike = () => {
     setIsLiked(!isLiked);
     setLikes(isLiked ? likes - 1 : likes + 1);
-  };
-
-  const handleRepost = () => {
-    setIsReposted(!isReposted);
-    setReposts(isReposted ? reposts - 1 : reposts + 1);
   };
 
   const formatNumber = (num: number) => {
@@ -62,14 +61,22 @@ export function PostCard({ post, className }: PostCardProps) {
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center">
-            <span className="text-primary-foreground font-semibold text-sm">
-              {post.author.avatar || post.author.name.charAt(0)}
-            </span>
-          </div>
+          {post.user.imageURL ? (
+            <img 
+              src={post.user.imageURL} 
+              alt={displayName}
+              className="w-10 h-10 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-10 h-10 bg-gradient-primary rounded-full flex items-center justify-center">
+              <span className="text-primary-foreground font-semibold text-sm">
+                {displayName.charAt(0).toUpperCase()}
+              </span>
+            </div>
+          )}
           <div>
-            <h3 className="font-semibold text-card-foreground">{post.author.name}</h3>
-            <p className="text-muted-foreground text-sm">@{post.author.username} · {post.timestamp}</p>
+            <h3 className="font-semibold text-card-foreground">{displayName}</h3>
+            <p className="text-muted-foreground text-sm">@{post.user.userName} · {timestamp}</p>
           </div>
         </div>
         <Button variant="ghost" size="xs">
@@ -79,13 +86,13 @@ export function PostCard({ post, className }: PostCardProps) {
 
       {/* Content */}
       <div className="mb-4">
-        <p className="text-card-foreground leading-relaxed mb-3">{post.content}</p>
+        <p className="text-card-foreground leading-relaxed mb-3">{post.textCaption}</p>
         
         {/* Image */}
-        {post.image && (
+        {post.imageURL && (
           <div className="rounded-lg overflow-hidden border border-border">
             <img 
-              src={post.image} 
+              src={post.imageURL} 
               alt="Post image" 
               className="w-full h-auto max-h-96 object-cover"
             />
@@ -113,21 +120,12 @@ export function PostCard({ post, className }: PostCardProps) {
           {/* Comment */}
           <Button variant="comment" size="sm" className="flex items-center space-x-2">
             <MessageCircle className="w-4 h-4" />
-            <span className="text-sm">{formatNumber(post.comments)}</span>
+            <span className="text-sm">{formatNumber(post.commentsCount || 0)}</span>
           </Button>
 
-          {/* Repost */}
-          <Button 
-            variant="repost" 
-            size="sm" 
-            className={cn(
-              "flex items-center space-x-2",
-              isReposted && "text-repost"
-            )}
-            onClick={handleRepost}
-          >
-            <Repeat2 className="w-4 h-4" />
-            <span className="text-sm">{formatNumber(reposts)}</span>
+          {/* Views */}
+          <Button variant="ghost" size="sm" className="flex items-center space-x-2">
+            <span className="text-sm">{formatNumber(post.viewCount || 0)} views</span>
           </Button>
         </div>
 
