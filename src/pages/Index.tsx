@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { BlueskySidebar } from "@/components/bluesky/BlueskySidebar";
-import { BlueskyFeed } from "@/components/bluesky/BlueskyFeed";
+import { Feed } from "@/components/posts/Feed";
 import { BlueskyCompose } from "@/components/bluesky/BlueskyCompose";
 import { AuthScreen } from "@/components/auth/AuthScreen";
 import { User } from "@/types/firebase";
@@ -67,7 +67,7 @@ const Index = () => {
 
         {/* Main Content */}
         <div className="flex-1 max-w-2xl">
-          <BlueskyFeed currentUser={currentUser} />
+          <Feed />
         </div>
 
       </div>

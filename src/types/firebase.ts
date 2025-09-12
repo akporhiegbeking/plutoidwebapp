@@ -1,7 +1,8 @@
 // Types for Firebase collections
 export interface User {
   id?: string;
-  uid: string;
+  uid?: string;
+  uuid?: string; // For bot users
   firstName: string;
   lastName: string;
   email: string;
@@ -25,7 +26,8 @@ export interface Post {
   id?: string;
   imageURL: string;
   dateCreated: any; // Firestore Timestamp
-  uid: string;
+  uid?: string; // For normal users
+  uuid?: string; // For bot users  
   email: string;
   textCaption: string;
   country: string;

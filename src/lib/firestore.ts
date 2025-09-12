@@ -180,27 +180,35 @@ export const getPostsPaginated = async (limitCount: number = 5, lastDoc?: Docume
     const postsPromises = postsSnapshot.docs.map(async (postDoc) => {
       const postData = postDoc.data();
       
-      if (!postData.uid || !postData.dateCreated) {
-        console.warn(`⛔ Skipping post ${postDoc.id} due to missing uid/dateCreated`);
+      // Check for both uid (normal users) and uuid (bot users)
+      const userId = postData.uid || postData.uuid;
+      if (!userId || !postData.dateCreated) {
+        console.warn(`⛔ Skipping post ${postDoc.id} due to missing uid/uuid/dateCreated`);
         return null;
       }
 
-      // Get user data with caching
-      let userData = userCache[postData.uid];
+      // Get user data with caching (handle both uid and uuid)
+      let userData = userCache[userId];
       if (!userData) {
-        const userSnapshot = await getDocs(
-          query(usersCollection, where('uid', '==', postData.uid))
-        );
+        const userQuery = postData.uid 
+          ? query(usersCollection, where('uid', '==', postData.uid))
+          : query(usersCollection, where('uuid', '==', postData.uuid));
+        
+        const userSnapshot = await getDocs(userQuery);
         if (userSnapshot.empty) return null;
         userData = userSnapshot.docs[0].data() as User;
-        userCache[postData.uid] = userData;
+        userCache[userId] = userData;
       }
+
+      // Convert Firestore timestamp to JavaScript Date
+      const dateCreated = postData.dateCreated?.toDate ? postData.dateCreated.toDate() : postData.dateCreated;
 
       let postWithUser: any = {
         ...postData,
         id: postDoc.id,
+        dateCreated: dateCreated,
         user: {
-          uid: userData.uid,
+          uid: userData.uid || userData.uuid,
           userName: userData.userName,
           firstName: userData.firstName,
           lastName: userData.lastName,
