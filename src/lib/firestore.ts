@@ -180,13 +180,15 @@ export const getPostsPaginated = async (limitCount: number = 5, lastDoc?: Docume
     const postsPromises = postsSnapshot.docs.map(async (postDoc) => {
       const postData = postDoc.data();
       
-      // Check for both uid (normal users) and uuid (bot users)
-      const userId = postData.uid || postData.uuid;
-      if (!userId || !postData.dateCreated) {
-        console.warn(`⛔ Skipping post ${postDoc.id} due to missing uid/uuid/dateCreated`);
+      // Check if post has either uid (real users) or uuid (bot users) and dateCreated
+      const hasUserId = postData.uid || postData.uuid;
+      if (!hasUserId || !postData.dateCreated) {
+        console.warn(`⛔ Skipping post ${postDoc.id} due to missing uid/uuid or dateCreated`);
         return null;
       }
 
+      const userId = postData.uid || postData.uuid;
+      
       // Get user data with caching (handle both uid and uuid)
       let userData = userCache[userId];
       if (!userData) {
@@ -197,6 +199,30 @@ export const getPostsPaginated = async (limitCount: number = 5, lastDoc?: Docume
         const userSnapshot = await getDocs(userQuery);
         if (!userSnapshot.empty) {
           userData = userSnapshot.docs[0].data() as User;
+          userCache[userId] = userData;
+        } else {
+          // If no user found, create a fallback user object
+          userData = {
+            uid: postData.uid || postData.uuid,
+            uuid: postData.uuid,
+            firstName: postData.firstName || 'Unknown',
+            lastName: postData.lastName || 'User',
+            userName: postData.userName || (postData.email ? String(postData.email).split('@')[0] : 'user'),
+            email: postData.email || '',
+            imageURL: postData.imageURL || '',
+            country: postData.country || '',
+            bio: '',
+            phoneNumber: '',
+            deviceName: '',
+            tfa: '',
+            feed_preference: '',
+            dateofBirth: '',
+            gender: '',
+            category: '',
+            chat_setting: '0',
+            status: '1',
+            dateCreated: postData.dateCreated
+          };
           userCache[userId] = userData;
         }
       }
