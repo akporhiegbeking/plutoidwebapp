@@ -57,11 +57,11 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
+    <div className="min-h-screen bg-background">
       {/* Exact BlueSky layout */}
       <div className="flex max-w-6xl mx-auto">
         {/* Left Sidebar - Hidden on mobile */}
-        <div className="hidden lg:block w-64 border-r border-gray-200 dark:border-gray-800">
+        <div className="hidden lg:block w-64 border-r border-border">
           <BlueskySidebar currentUser={currentUser} />
         </div>
 
@@ -73,22 +73,22 @@ const Index = () => {
       </div>
 
       {/* Mobile Bottom Navigation - Exact BlueSky style */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-background border-t border-border">
         <div className="flex justify-around items-center h-16 px-4">
-          <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
-            <div className="w-6 h-6 bg-blue-500 rounded-md"></div>
+          <button className="p-3 hover:bg-muted rounded-full transition-colors">
+            <div className="w-6 h-6 bg-primary rounded-md"></div>
           </button>
           <button 
             onClick={() => navigate('/search')}
-            className="p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+            className="p-3 hover:bg-muted rounded-full transition-colors"
           >
-            <Search className="w-6 h-6" />
+            <Search className="w-6 h-6 text-muted-foreground" />
           </button>
-          <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
-            <Bell className="w-6 h-6" />
+          <button className="p-3 hover:bg-muted rounded-full transition-colors">
+            <Bell className="w-6 h-6 text-muted-foreground" />
           </button>
-          <button className="p-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
-            <Mail className="w-6 h-6" />
+          <button className="p-3 hover:bg-muted rounded-full transition-colors">
+            <Mail className="w-6 h-6 text-muted-foreground" />
           </button>
         </div>
       </div>
@@ -96,7 +96,7 @@ const Index = () => {
       {/* Floating Compose Button - Mobile */}
       <button
         onClick={() => setShowCompose(true)}
-        className="lg:hidden fixed bottom-20 right-4 w-14 h-14 bg-blue-500 hover:bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center transition-colors"
+        className="lg:hidden fixed bottom-20 right-4 w-14 h-14 bg-primary hover:bg-primary-hover text-primary-foreground rounded-full shadow-lg flex items-center justify-center transition-colors"
       >
         <Feather className="w-6 h-6" />
       </button>

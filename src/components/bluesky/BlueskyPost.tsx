@@ -117,8 +117,8 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
 
   return (
     <article 
-      className={`border-b border-gray-200 dark:border-gray-800 p-4 transition-colors ${
-        !isDetailView ? 'hover:bg-gray-50 dark:hover:bg-gray-900/50 cursor-pointer' : ''
+      className={`border-b border-border p-4 transition-colors ${
+        !isDetailView ? 'hover:bg-muted/50 cursor-pointer' : ''
       }`}
       onClick={!isDetailView ? () => {
         console.log('Post ID:', post.id);
@@ -130,7 +130,7 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
       <div className="flex items-start space-x-3">
         {/* Avatar */}
         <div 
-          className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+          className="w-10 h-10 bg-muted rounded-full flex items-center justify-center flex-shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
           onClick={(e) => {
             e.stopPropagation();
             if (author) {
@@ -145,7 +145,7 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
               className="w-10 h-10 rounded-full object-cover"
             />
           ) : (
-            <span className="text-gray-600 font-semibold text-sm">
+            <span className="text-muted-foreground font-semibold text-sm">
               {author?.firstName?.[0] || 'U'}
             </span>
           )}
@@ -156,7 +156,7 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
           {/* Author info */}
           <div className="flex items-center space-x-2 mb-1">
             <span 
-              className="font-bold text-gray-900 dark:text-white cursor-pointer hover:underline"
+              className="font-bold text-foreground cursor-pointer hover:underline"
               onClick={(e) => {
                 e.stopPropagation();
                 if (author) {
@@ -166,15 +166,15 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
             >
               {author ? `${author.firstName} ${author.lastName}` : 'Loading...'}
             </span>
-            <span className="text-gray-500">@{author?.userName || 'username'}</span>
-            <span className="text-gray-500">·</span>
-            <span className="text-gray-500">{formatTimestamp(post.dateCreated)}</span>
+            <span className="text-muted-foreground">@{author?.userName || 'username'}</span>
+            <span className="text-muted-foreground">·</span>
+            <span className="text-muted-foreground">{formatTimestamp(post.dateCreated)}</span>
           </div>
 
           {/* Post text */}
           {post.textCaption && (
             <div className="mb-3">
-              <p className="text-gray-900 dark:text-white whitespace-pre-wrap">
+              <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
                 {post.textCaption}
               </p>
             </div>
@@ -182,7 +182,7 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
 
           {/* Post image */}
           {post.imageURL && (
-            <div className="mb-3 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+            <div className="mb-3 rounded-xl overflow-hidden border border-border">
               <img 
                 src={post.imageURL} 
                 alt="Post image" 
@@ -196,7 +196,7 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
           <div className="flex items-center justify-between max-w-md mt-3">
             {/* Reply */}
             <button 
-              className="flex items-center space-x-2 text-gray-500 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full p-2 transition-colors"
+              className="flex items-center space-x-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full p-2 transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
               <MessageCircle className="w-4 h-4" />
@@ -205,7 +205,7 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
 
             {/* Repost */}
             <button 
-              className="flex items-center space-x-2 text-gray-500 hover:text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-full p-2 transition-colors"
+              className="flex items-center space-x-2 text-muted-foreground hover:text-repost hover:bg-repost/10 rounded-full p-2 transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
               <Repeat2 className="w-4 h-4" />
@@ -216,8 +216,8 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
               className={cn(
                 "flex items-center space-x-2 rounded-full p-2 transition-colors",
                 isLiked 
-                  ? "text-red-500" 
-                  : "text-gray-500 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                  ? "text-like" 
+                  : "text-muted-foreground hover:text-like hover:bg-like/10"
               )}
               onClick={handleLike}
             >
@@ -230,8 +230,8 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
               className={cn(
                 "flex items-center space-x-2 rounded-full p-2 transition-colors",
                 isSaved 
-                  ? "text-blue-500" 
-                  : "text-gray-500 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                  ? "text-primary" 
+                  : "text-muted-foreground hover:text-primary hover:bg-primary/10"
               )}
               onClick={handleSave}
             >
@@ -240,7 +240,7 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
 
             {/* Share */}
             <button 
-              className="text-gray-500 hover:text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full p-2 transition-colors"
+              className="text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full p-2 transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
               <Share className="w-4 h-4" />
@@ -250,7 +250,7 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
 
         {/* More menu */}
         <button 
-          className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-1 transition-colors"
+          className="text-muted-foreground hover:text-foreground hover:bg-muted rounded-full p-1 transition-colors"
           onClick={(e) => e.stopPropagation()}
         >
           <MoreHorizontal className="w-4 h-4" />

@@ -2,144 +2,137 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Plutoid Design System - Modern social media color palette inspired by BlueSky */
+/* Bluesky Design System - Exact replica of Bluesky Social colors */
 
 @layer base {
   :root {
-    /* Light mode - Clean, minimal social media theme */
+    /* Light mode - Bluesky colors */
     --background: 0 0% 100%;
-    --foreground: 222 84% 5%;
+    --foreground: 210 22% 58%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 84% 5%;
+    --card-foreground: 210 22% 58%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 84% 5%;
+    --popover-foreground: 210 22% 58%;
 
-    /* Plutoid brand purple-blue gradient */
-    --primary: 258 90% 66%;
-    --primary-foreground: 0 0% 98%;
-    --primary-hover: 258 85% 70%;
+    /* Gold accent color (replaces blue/purple) */
+    --primary: 51 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --primary-hover: 51 100% 45%;
     
-    /* Soft secondary colors */
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    /* Bluesky secondary colors */
+    --secondary: 210 20% 95%;
+    --secondary-foreground: 210 22% 58%;
 
-    /* Muted backgrounds for subtle UI elements */
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    /* Muted backgrounds */
+    --muted: 210 20% 95%;
+    --muted-foreground: 210 22% 58%;
 
-    /* Accent color for highlights */
-    --accent: 258 100% 97%;
-    --accent-foreground: 258 90% 66%;
+    /* Accent color */
+    --accent: 210 20% 95%;
+    --accent-foreground: 51 100% 50%;
 
     /* Error states */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
     /* Borders and inputs */
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 258 90% 66%;
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 51 100% 50%;
 
-    /* Border radius for modern feel */
-    --radius: 0.75rem;
+    /* Border radius - Bluesky style */
+    --radius: 0.5rem;
 
-    /* Social media specific colors */
+    /* Social interaction colors */
     --like-color: 348 83% 47%;
     --repost-color: 142 71% 45%;
-    --comment-color: 258 90% 66%;
+    --comment-color: 51 100% 50%;
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(258 90% 66%), hsl(282 85% 70%));
-    --gradient-secondary: linear-gradient(135deg, hsl(240 4.8% 95.9%), hsl(240 5.9% 98%));
-    --gradient-hero: linear-gradient(135deg, hsl(258 90% 66%), hsl(282 85% 70%), hsl(300 80% 75%));
+    --gradient-primary: linear-gradient(135deg, hsl(51 100% 50%), hsl(45 100% 55%));
+    --gradient-secondary: linear-gradient(135deg, hsl(210 20% 95%), hsl(210 25% 98%));
+    --gradient-hero: linear-gradient(135deg, hsl(51 100% 50%), hsl(45 100% 55%));
     
-    /* Shadows for depth */
-    --shadow-sm: 0 1px 2px 0 hsl(258 90% 66% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(258 90% 66% / 0.1), 0 2px 4px -1px hsl(258 90% 66% / 0.06);
-    --shadow-lg: 0 10px 15px -3px hsl(258 90% 66% / 0.1), 0 4px 6px -2px hsl(258 90% 66% / 0.05);
-    --shadow-glow: 0 0 0 1px hsl(258 90% 66% / 0.1), 0 0 20px hsl(258 90% 66% / 0.2);
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.06);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -2px hsl(0 0% 0% / 0.05);
+    --shadow-glow: 0 0 0 1px hsl(51 100% 50% / 0.1), 0 0 20px hsl(51 100% 50% / 0.2);
 
     /* Animations */
     --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 210 22% 58%;
+    --sidebar-primary: 51 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 210 20% 95%;
+    --sidebar-accent-foreground: 210 22% 58%;
+    --sidebar-border: 210 20% 90%;
+    --sidebar-ring: 51 100% 50%;
   }
 
   .dark {
-    /* Dark mode - Sleek social media theme */
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Dark mode - Bluesky dark theme with custom background */
+    --background: 208 28% 13%; /* #161E27 */
+    --foreground: 0 0% 100%;
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --card: 208 28% 13%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 208 28% 13%;
+    --popover-foreground: 0 0% 100%;
 
-    /* Plutoid brand in dark mode */
-    --primary: 258 90% 66%;
-    --primary-foreground: 0 0% 98%;
-    --primary-hover: 258 85% 70%;
+    /* Gold accent in dark mode */
+    --primary: 51 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --primary-hover: 51 100% 55%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 208 25% 20%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 208 25% 20%;
+    --muted-foreground: 210 22% 58%; /* #788EA5 for post text */
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 258 90% 66%;
+    --accent: 208 25% 20%;
+    --accent-foreground: 51 100% 50%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 258 90% 66%;
+    --border: 208 25% 25%;
+    --input: 208 25% 25%;
+    --ring: 51 100% 50%;
 
     /* Social colors in dark mode */
     --like-color: 348 83% 57%;
     --repost-color: 142 71% 55%;
-    --comment-color: 258 90% 66%;
+    --comment-color: 51 100% 50%;
 
     /* Dark mode gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(258 90% 66%), hsl(282 85% 70%));
-    --gradient-secondary: linear-gradient(135deg, hsl(240 3.7% 15.9%), hsl(240 5% 20%));
-    --gradient-hero: linear-gradient(135deg, hsl(258 90% 66%), hsl(282 85% 70%), hsl(300 80% 75%));
+    --gradient-primary: linear-gradient(135deg, hsl(51 100% 50%), hsl(45 100% 55%));
+    --gradient-secondary: linear-gradient(135deg, hsl(208 25% 20%), hsl(208 30% 25%));
+    --gradient-hero: linear-gradient(135deg, hsl(51 100% 50%), hsl(45 100% 55%));
     
     /* Dark shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.15);
-    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.2), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.25), 0 4px 6px -2px hsl(0 0% 0% / 0.1);
-    --shadow-glow: 0 0 0 1px hsl(258 90% 66% / 0.2), 0 0 20px hsl(258 90% 66% / 0.3);
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.25);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.3), 0 2px 4px -1px hsl(0 0% 0% / 0.15);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.35), 0 4px 6px -2px hsl(0 0% 0% / 0.15);
+    --shadow-glow: 0 0 0 1px hsl(51 100% 50% / 0.2), 0 0 20px hsl(51 100% 50% / 0.3);
 
     /* Sidebar colors for dark mode */
-    --sidebar-background: 240 10% 3.9%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 258 90% 66%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 258 90% 66%;
+    --sidebar-background: 208 28% 13%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 51 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 208 25% 20%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 208 25% 25%;
+    --sidebar-ring: 51 100% 50%;
   }
 }
 

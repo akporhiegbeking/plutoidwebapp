@@ -105,17 +105,17 @@ export function CommentScreen({ currentUser }: CommentScreenProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full"></div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full"></div>
       </div>
     );
   }
 
   if (!post || !postUser) {
     return (
-      <div className="min-h-screen bg-white dark:bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-bold mb-2">Post not found</h2>
+          <h2 className="text-xl font-bold mb-2 text-foreground">Post not found</h2>
           <Button onClick={() => navigate(-1)}>Go back</Button>
         </div>
       </div>
@@ -123,23 +123,23 @@ export function CommentScreen({ currentUser }: CommentScreenProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="sticky top-0 bg-white/80 dark:bg-black/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 p-4">
+      <div className="sticky top-0 bg-background/80 backdrop-blur-md border-b border-border p-4">
         <div className="flex items-center space-x-4 max-w-2xl mx-auto">
           <button 
             onClick={() => navigate(-1)}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+            className="p-2 hover:bg-muted rounded-full transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="text-xl font-bold">Post</h1>
+          <h1 className="text-xl font-bold text-foreground">Post</h1>
         </div>
       </div>
 
       <div className="max-w-2xl mx-auto">
         {/* Main Post */}
-        <div className="border-b border-gray-200 dark:border-gray-800">
+        <div className="border-b border-border">
           <BlueskyPost 
             post={post} 
             currentUser={currentUser}
@@ -150,9 +150,9 @@ export function CommentScreen({ currentUser }: CommentScreenProps) {
 
         {/* Comment Form */}
         {currentUser && (
-          <div className="border-b border-gray-200 dark:border-gray-800 p-4">
+          <div className="border-b border-border p-4">
             <div className="flex space-x-3">
-              <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
                 {currentUser.imageURL ? (
                   <img 
                     src={currentUser.imageURL} 
@@ -160,7 +160,7 @@ export function CommentScreen({ currentUser }: CommentScreenProps) {
                     className="w-12 h-12 rounded-full object-cover"
                   />
                 ) : (
-                  <span className="text-gray-600 font-semibold">
+                  <span className="text-muted-foreground font-semibold">
                     {currentUser.firstName[0]}{currentUser.lastName[0]}
                   </span>
                 )}
@@ -170,14 +170,14 @@ export function CommentScreen({ currentUser }: CommentScreenProps) {
                   placeholder="Post your reply"
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  className="border-none resize-none focus:ring-0 text-xl"
+                  className="border-none resize-none focus:ring-0 text-xl bg-transparent text-muted-foreground placeholder:text-muted-foreground/70"
                   rows={3}
                 />
                 <div className="flex justify-end mt-3">
                   <Button 
                     onClick={handleSubmitComment}
                     disabled={!newComment.trim() || submitting}
-                    className="bg-blue-500 hover:bg-blue-600"
+                    className="bg-primary hover:bg-primary-hover text-primary-foreground"
                   >
                     {submitting ? "Posting..." : "Reply"}
                   </Button>
@@ -188,16 +188,16 @@ export function CommentScreen({ currentUser }: CommentScreenProps) {
         )}
 
         {/* Comments */}
-        <div className="divide-y divide-gray-200 dark:divide-gray-800">
+        <div className="divide-y divide-border">
           {comments.length > 0 ? (
             comments.map((comment) => {
               const commentUser = commentUsers[comment.uid];
               if (!commentUser) return null;
               
               return (
-                <div key={comment.id} className="p-4 hover:bg-gray-50 dark:hover:bg-gray-900/50">
+                <div key={comment.id} className="p-4 hover:bg-muted/50 transition-colors">
                   <div className="flex space-x-3">
-                    <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
                       {commentUser.imageURL ? (
                         <img 
                           src={commentUser.imageURL} 
@@ -205,7 +205,7 @@ export function CommentScreen({ currentUser }: CommentScreenProps) {
                           className="w-10 h-10 rounded-full object-cover"
                         />
                       ) : (
-                        <span className="text-gray-600 font-semibold text-sm">
+                        <span className="text-muted-foreground font-semibold text-sm">
                           {commentUser.firstName[0]}{commentUser.lastName[0]}
                         </span>
                       )}
@@ -213,10 +213,10 @@ export function CommentScreen({ currentUser }: CommentScreenProps) {
                     
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">
-                        <span className="font-bold">{commentUser.firstName} {commentUser.lastName}</span>
-                        <span className="text-gray-500 text-sm">@{commentUser.userName}</span>
-                        <span className="text-gray-500 text-sm">·</span>
-                        <span className="text-gray-500 text-sm">
+                        <span className="font-bold text-foreground">{commentUser.firstName} {commentUser.lastName}</span>
+                        <span className="text-muted-foreground text-sm">@{commentUser.userName}</span>
+                        <span className="text-muted-foreground text-sm">·</span>
+                        <span className="text-muted-foreground text-sm">
                           {comment.dateCreated?.toDate ? 
                             comment.dateCreated.toDate().toLocaleDateString() : 
                             new Date(comment.dateCreated).toLocaleDateString()
@@ -224,19 +224,19 @@ export function CommentScreen({ currentUser }: CommentScreenProps) {
                         </span>
                       </div>
                       
-                      <p className="text-gray-900 dark:text-gray-100 mb-3">
+                      <p className="text-muted-foreground mb-3 leading-relaxed">
                         {comment.textComment}
                       </p>
                       
                       {/* Comment Actions */}
-                      <div className="flex items-center space-x-6 text-gray-500">
-                        <button className="flex items-center space-x-2 hover:text-blue-500 transition-colors">
+                      <div className="flex items-center space-x-6 text-muted-foreground">
+                        <button className="flex items-center space-x-2 hover:text-primary hover:bg-primary/10 rounded-full p-1 transition-colors">
                           <MessageCircle className="w-4 h-4" />
                         </button>
-                        <button className="flex items-center space-x-2 hover:text-green-500 transition-colors">
+                        <button className="flex items-center space-x-2 hover:text-repost hover:bg-repost/10 rounded-full p-1 transition-colors">
                           <Repeat className="w-4 h-4" />
                         </button>
-                        <button className="flex items-center space-x-2 hover:text-red-500 transition-colors">
+                        <button className="flex items-center space-x-2 hover:text-like hover:bg-like/10 rounded-full p-1 transition-colors">
                           <Heart className="w-4 h-4" />
                         </button>
                       </div>
@@ -246,7 +246,7 @@ export function CommentScreen({ currentUser }: CommentScreenProps) {
               );
             })
           ) : (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center text-muted-foreground">
               No comments yet. Be the first to reply!
             </div>
           )}
