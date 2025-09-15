@@ -120,7 +120,11 @@ export function BlueskyPost({ post, currentUser, onPostClick, isDetailView }: Bl
       className={`border-b border-gray-200 dark:border-gray-800 p-4 transition-colors ${
         !isDetailView ? 'hover:bg-gray-50 dark:hover:bg-gray-900/50 cursor-pointer' : ''
       }`}
-      onClick={!isDetailView ? () => onPostClick?.(post.id) : undefined}
+      onClick={!isDetailView ? () => {
+        console.log('Post ID:', post.id);
+        navigate(`/post/${post.id}`);
+        onPostClick?.(post.id);
+      } : undefined}
     >
       {/* Header */}
       <div className="flex items-start space-x-3">

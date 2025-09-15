@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 import { 
   Heart, 
   MessageCircle, 
@@ -34,6 +35,7 @@ interface PostCardProps {
 }
 
 export function PostCard({ post, className }: PostCardProps) {
+  const navigate = useNavigate();
   const [isLiked, setIsLiked] = useState(post.isLiked || false);
   const [isBookmarked, setIsBookmarked] = useState(post.isSaved || false);
   const [likes, setLikes] = useState(post.likeCount || 0);
@@ -53,11 +55,19 @@ export function PostCard({ post, className }: PostCardProps) {
     return num.toString();
   };
 
+  const handlePostClick = () => {
+    console.log('Post ID:', post.id);
+    navigate(`/post/${post.id}`);
+  };
+
   return (
-    <article className={cn(
-      "bg-card border border-border rounded-lg p-4 hover:shadow-custom-sm transition-all duration-200 cursor-pointer",
-      className
-    )}>
+    <article 
+      className={cn(
+        "bg-card border border-border rounded-lg p-4 hover:shadow-custom-sm transition-all duration-200 cursor-pointer",
+        className
+      )}
+      onClick={handlePostClick}
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">
@@ -111,14 +121,22 @@ export function PostCard({ post, className }: PostCardProps) {
               "flex items-center space-x-2",
               isLiked && "text-like"
             )}
-            onClick={handleLike}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleLike();
+            }}
           >
             <Heart className={cn("w-4 h-4", isLiked && "fill-current")} />
             <span className="text-sm">{formatNumber(likes)}</span>
           </Button>
 
           {/* Comment */}
-          <Button variant="comment" size="sm" className="flex items-center space-x-2">
+          <Button 
+            variant="comment" 
+            size="sm" 
+            className="flex items-center space-x-2"
+            onClick={(e) => e.stopPropagation()}
+          >
             <MessageCircle className="w-4 h-4" />
             <span className="text-sm">{formatNumber(post.commentsCount || 0)}</span>
           </Button>
@@ -134,12 +152,19 @@ export function PostCard({ post, className }: PostCardProps) {
             variant="ghost" 
             size="xs"
             className={cn(isBookmarked && "text-primary")}
-            onClick={() => setIsBookmarked(!isBookmarked)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsBookmarked(!isBookmarked);
+            }}
           >
             <Bookmark className={cn("w-4 h-4", isBookmarked && "fill-current")} />
           </Button>
           
-          <Button variant="ghost" size="xs">
+          <Button 
+            variant="ghost" 
+            size="xs"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Share className="w-4 h-4" />
           </Button>
         </div>
